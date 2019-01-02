@@ -34,6 +34,13 @@ echo "$msg - done"
 #chown aosp:aosp -R /home/aosp/.ssh &&
 #echo "$msg - done"
 
+msg="link .ssh ..." && echo $msg
+rm -rf /home/aosp/.ssh
+ln -s /data/.ssh /home/aosp/.ssh
+chown aosp /data/.ssh
+chown aosp /home/aosp/.ssh
+echo "$msg - done"
+
 msg="docker_entrypoint: Creating /tmp/ccache and /aosp directory" && echo $msg
 mkdir -p /tmp/ccache /aosp
 chown aosp:aosp /tmp/ccache /aosp
