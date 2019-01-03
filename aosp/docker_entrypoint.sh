@@ -39,6 +39,7 @@ cp -rf /data/home/.ssh /home/aosp/
 cp -rf /data/home/.repoconfig /home/aosp/
 cp -rf /data/home/.gitconfig /home/aosp/
 chown -R aosp:aosp /home/aosp/.ssh /home/aosp/.repoconfig /home/aosp/.gitconfig
+chmod 600 /home/aosp/.ssh/id_rsa
 echo "\r$msg - done"
 
 msg="docker_entrypoint: Creating /tmp/ccache and /aosp directory" && echo $msg
