@@ -21,20 +21,14 @@ if [ -z ${GROUP_ID+x} ]; then GROUP_ID=1000; fi
 export CCACHE_DIR=/tmp/ccache
 export USE_CCACHE=1
 
+# create user
 msg="docker_entrypoint: Creating user UID/GID [$USER_ID/$GROUP_ID]" && echo -e "$msg\c"
 groupadd -g $GROUP_ID -r aosp && \
 useradd -u $USER_ID --create-home -r -p aosp -g aosp aosp
 chown aosp:aosp /tmp/ccache /aosp
 echo -e "\r$msg - done"
 
-#msg="docker_entrypoint: Copying .gitconfig and .ssh/config to new user home" && echo $msg
-#cp /root/.gitconfig /home/aosp/.gitconfig && \
-#chown aosp:aosp /home/aosp/.gitconfig && \
-#mkdir -p /home/aosp/.ssh && \
-#cp /root/.ssh/config /home/aosp/.ssh/config && \
-#chown aosp:aosp -R /home/aosp/.ssh &&
-#echo "$msg - done"
-
+# copy configs
 msg="copy configs" && echo -e "$msg\c"
 cp -rf /data/home/.ssh /home/aosp/
 cp -rf /data/home/.repoconfig /home/aosp/
