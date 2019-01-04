@@ -50,6 +50,7 @@ if [ ! -z "$REAL_PATH" ]; then
 fi
 echo -e "\r$msg - done"
 
+echo "===============>"
 echo ""
 
 # Default to 'bash' if no arguments are provided
@@ -58,6 +59,10 @@ if [ -z "$args" ]; then
   args="bash"
 fi
 
+# save args as launch script
+echo "$args" > /home/aosp/launch.sh
+chmod 777 /home/aosp/launch.sh
+
 # Execute command as `aosp` user
 export HOME=/home/aosp
-exec sudo -E -u aosp $args
+exec sudo -E -u aosp /home/aosp/launch.sh
