@@ -23,7 +23,7 @@ export USE_CCACHE=1
 
 msg="docker_entrypoint: Creating user UID/GID [$USER_ID/$GROUP_ID]" && echo -e "$msg\c"
 groupadd -g $GROUP_ID -r aosp && \
-useradd -u $USER_ID --create-home -r -p aosp -g aosp -G sudo aosp
+useradd -u $USER_ID --create-home -r -p aosp -g aosp aosp
 chown aosp:aosp /tmp/ccache /aosp
 echo -e "\r$msg - done"
 
