@@ -24,6 +24,7 @@ export USE_CCACHE=1
 msg="docker_entrypoint: Creating user UID/GID [$USER_ID/$GROUP_ID]" && echo -e "$msg\c"
 groupadd -g $GROUP_ID -r aosp && \
 useradd -u $USER_ID --create-home -r -p aosp -g aosp aosp
+chown aosp:aosp /tmp/ccache /aosp
 echo -e "\r$msg - done"
 
 #msg="docker_entrypoint: Copying .gitconfig and .ssh/config to new user home" && echo $msg
@@ -40,11 +41,13 @@ cp -rf /data/home/.repoconfig /home/aosp/
 cp -rf /data/home/.gitconfig /home/aosp/
 chown -R aosp:aosp /home/aosp/.ssh /home/aosp/.repoconfig /home/aosp/.gitconfig
 chmod 600 /home/aosp/.ssh/id_rsa
-echo -e "\r$msg - done"
 
-msg="docker_entrypoint: Creating /tmp/ccache and /aosp directory" && echo -e "$msg\c"
-mkdir -p /tmp/ccache /aosp
-chown aosp:aosp /tmp/ccache /aosp
+if [ ! -z "$REAL_PATH" ]; then
+    mkdir -p $(dirname $REAL_PATH)
+    ln -s /aosp $REAL_PATH
+    chown aosp:aosp $REAL_PATH
+    cd $REAL_PATH
+if
 echo -e "\r$msg - done"
 
 echo ""
