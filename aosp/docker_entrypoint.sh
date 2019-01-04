@@ -53,7 +53,7 @@ echo -e "\r$msg - done"
 echo ""
 
 # Default to 'bash' if no arguments are provided
-args="$@"
+args=$@
 if [ -z "$args" ]; then
   args="bash"
 fi
