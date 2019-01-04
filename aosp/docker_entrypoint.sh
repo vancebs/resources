@@ -60,7 +60,8 @@ if [ -z "$args" ]; then
 fi
 
 # save args as launch script
-echo "$args" > /home/aosp/launch.sh
+echo "export PS1=\"[aosp] \$PS1\"" > /home/aosp/launch.sh
+echo "$args" >> /home/aosp/launch.sh
 chmod 777 /home/aosp/launch.sh
 
 # Execute command as `aosp` user
