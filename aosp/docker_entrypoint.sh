@@ -42,7 +42,7 @@ chmod 600 $USER_HOME/.ssh/id_rsa
 
 if [ ! -z "$PROJECT_PATH" ]; then
     mkdir -p $(dirname $PROJECT_PATH)
-    ln -s /aosp $PROJECT_PATH
+    ln -s /aosp $(dirname $PROJECT_PATH/null)
     chown $USER_NAME:$GROUP_NAME $PROJECT_PATH
     cd $PROJECT_PATH
 fi
