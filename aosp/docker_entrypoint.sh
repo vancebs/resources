@@ -16,35 +16,39 @@ set -e
 # Reasonable defaults if no USER_ID/GROUP_ID environment variables are set.
 if [ -z ${USER_ID+x} ]; then USER_ID=1000; fi
 if [ -z ${GROUP_ID+x} ]; then GROUP_ID=1000; fi
+if [ -z ${USER_NAME+x} ]; then USER_NAME="aosp"; fi
+if [ -z ${GROUP_NAME+x} ]; then GROUP_NAME="aosp"; fi
+if [ -z ${USER_PASSWD+x} ]; then USER_PASSWD="aosp"; fi
 
 # ccache
 export CCACHE_DIR=/tmp/ccache
 export USE_CCACHE=1
 
 # create user
-msg="docker_entrypoint: Creating user UID/GID [$USER_ID/$GROUP_ID]" && echo -e "$msg\c"
-groupadd -g $GROUP_ID -r aosp && \
-useradd -u $USER_ID --create-home -r -p aosp -g aosp aosp
-chown aosp:aosp /tmp/ccache /aosp
-echo -e "\r$msg - done"
+msg="Init: Creating user UID:UNAME/GID:GNAME/PASSWD [$USER_ID:$USER_NAME/$GROUP_ID:$GROUP_NAME/$USER_PASSWD]" && echo -e "\033[34m$msg\033[0m\c"
+groupadd -g $GROUP_ID -r $GROUP_NAME && \
+useradd -u $USER_ID --create-home -r -p $USER_PASSWD -g $GROUP_NAME $USER_NAME
+chown $USER_NAME:$GROUP_NAME /tmp/ccache /aosp
+echo -e "\r\033[32m$msg - done\033[0m"
 
 # copy configs
-msg="copy configs" && echo -e "$msg\c"
-cp -rf /data/home/.ssh /home/aosp/
-cp -rf /data/home/.repoconfig /home/aosp/
-cp -rf /data/home/.gitconfig /home/aosp/
-chown -R aosp:aosp /home/aosp/.ssh /home/aosp/.repoconfig /home/aosp/.gitconfig
-chmod 600 /home/aosp/.ssh/id_rsa
+msg="Init: copy configs" && echo -e "\033[34m$msg\033[0m\c"
+USER_HOME=/home/$USER_NAME
+cp -rf /data/home/.ssh $USER_HOME/
+cp -rf /data/home/.repoconfig $USER_HOME/
+cp -rf /data/home/.gitconfig $USER_HOME/
+chown -R $USER_NAME:$GROUP_NAME $USER_HOME/.ssh $USER_HOME/.repoconfig $USER_HOME/.gitconfig
+chmod 600 $USER_HOME/.ssh/id_rsa
 
-if [ ! -z "$REAL_PATH" ]; then
-    mkdir -p $(dirname $REAL_PATH)
-    ln -s /aosp $REAL_PATH
-    chown aosp:aosp $REAL_PATH
-    cd $REAL_PATH
+if [ ! -z "$PROJECT_PATH" ]; then
+    mkdir -p $(dirname $PROJECT_PATH)
+    ln -s /aosp $PROJECT_PATH
+    chown $USER_NAME:$GROUP_NAME $PROJECT_PATH
+    cd $PROJECT_PATH
 fi
-echo -e "\r$msg - done"
+echo -e "\r\033[32m$msg - done\033[0m"
 
-echo "===============>"
+echo -e "\033[36m===============>\033[0m"
 echo ""
 
 # Default to 'bash' if no arguments are provided
@@ -54,10 +58,10 @@ if [ -z "$args" ]; then
 fi
 
 # save args as launch script
-echo "export PS1=\"[aosp] \$PS1\"" > /home/aosp/launch.sh
-echo "$args" >> /home/aosp/launch.sh
-chmod 777 /home/aosp/launch.sh
+LAUNCH_SCRIPT=$USER_HOME/launch.sh
+echo "$args" >> $LAUNCH_SCRIPT
+chmod 777 $LAUNCH_SCRIPT
 
 # Execute command as `aosp` user
-export HOME=/home/aosp
-exec sudo -E -u aosp /home/aosp/launch.sh
+export HOME=$USER_HOME
+exec sudo -E -u $USER_NAME $USER_HOME/launch.sh
