@@ -59,11 +59,11 @@ fi
 
 # save args as launch script
 LAUNCH_SCRIPT=$USER_HOME/launch.sh
-echo "$args" >> $LAUNCH_SCRIPT
+echo "$args" > $LAUNCH_SCRIPT
 chmod 777 $LAUNCH_SCRIPT
 
 # init .bashrc
-USER_BASHRC=$USER_NAME/.bashrc
+USER_BASHRC=$USER_HOME/.bashrc
 echo "PS1_OLD=\$PS1" >> $USER_BASHRC
 echo "PS1=\"[AOSP_ENV] \$PS1\"" >> $USER_BASHRC
 
