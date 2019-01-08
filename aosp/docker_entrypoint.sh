@@ -29,6 +29,7 @@ msg="Init: Creating user UID:UNAME/GID:GNAME/PASSWD [$USER_ID:$USER_NAME/$GROUP_
 groupadd -g $GROUP_ID -r $GROUP_NAME && \
 useradd -u $USER_ID --create-home -r -p $USER_PASSWD -g $GROUP_NAME $USER_NAME
 chown $USER_NAME:$GROUP_NAME /tmp/ccache /aosp
+echo "$USER_NAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers # sudo no password for new user
 echo -e "\r\033[32m$msg - done\033[0m"
 
 # copy configs
