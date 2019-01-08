@@ -20,20 +20,16 @@ if [ -z ${USER_NAME+x} ]; then USER_NAME="aosp"; fi
 if [ -z ${GROUP_NAME+x} ]; then GROUP_NAME="aosp"; fi
 if [ -z ${USER_PASSWD+x} ]; then USER_PASSWD="aosp"; fi
 
-# ccache
-export CCACHE_DIR=/tmp/ccache
-export USE_CCACHE=1
-
 # create user
 msg="Init: Creating user UID:UNAME/GID:GNAME/PASSWD [$USER_ID:$USER_NAME/$GROUP_ID:$GROUP_NAME/$USER_PASSWD]" && echo -e "\033[34m$msg\033[0m\c"
 groupadd -g $GROUP_ID -r $GROUP_NAME && \
 useradd -u $USER_ID --create-home -r -p $USER_PASSWD -g $GROUP_NAME $USER_NAME
-chown $USER_NAME:$GROUP_NAME /tmp/ccache /aosp
+chown $USER_NAME:$GROUP_NAME /aosp
 echo "$USER_NAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers # sudo no password for new user
 echo -e "\r\033[32m$msg - done\033[0m"
 
 # copy configs
-msg="Init: copy configs" && echo -e "\033[34m$msg\033[0m\c"
+msg="Init: env configs" && echo -e "\033[34m$msg\033[0m\c"
 USER_HOME=/home/$USER_NAME
 cp -rf /data/home/.ssh $USER_HOME/
 cp -rf /data/home/.repoconfig $USER_HOME/
@@ -41,6 +37,14 @@ cp -rf /data/home/.gitconfig $USER_HOME/
 chown -R $USER_NAME:$GROUP_NAME $USER_HOME/.ssh $USER_HOME/.repoconfig $USER_HOME/.gitconfig
 chmod 600 $USER_HOME/.ssh/id_rsa
 
+# map .ccache
+if [ ! -e /data/home/.ccache ]; then
+    mkdir /data/home/.ccache
+    chown $USER_NAME:$GROUP_NAME /data/home/.ccache
+fi
+ln -s /data/home/.ccache $USER_HOME/.ccache
+
+# map project dir
 if [ ! -z "$PROJECT_PATH" ]; then
     mkdir -p $(dirname $PROJECT_PATH)
     ln -s /aosp $(dirname $PROJECT_PATH/null)
@@ -67,6 +71,8 @@ chmod 777 $LAUNCH_SCRIPT
 USER_BASHRC=$USER_HOME/.bashrc
 echo "PS1_OLD=\$PS1" >> $USER_BASHRC
 echo "PS1=\"[AOSP_ENV] \$PS1\"" >> $USER_BASHRC
+echo "export USE_CCACHE=1" >> $USER_BASHRC
+echo "export CCACHE_DIR=$USER_HOME/.ccache" >> $USER_BASHRC
 
 # Execute command as `aosp` user
 export HOME=$USER_HOME
