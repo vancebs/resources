@@ -43,6 +43,7 @@ if [ ! -e /data/home/.ccache ]; then
     chown $USER_NAME:$GROUP_NAME /data/home/.ccache
 fi
 ln -s /data/home/.ccache $USER_HOME/.ccache
+chown $USER_NAME:$GROUP_NAME $USER_HOME/.ccache
 
 # map project dir
 if [ ! -z "$PROJECT_PATH" ]; then
